@@ -17,7 +17,8 @@ void onMain() {
 
     file.onData([=]( string_t data ){
         ulong pos = 0; forEach( x, data ){
-            x = x ^ sec[pos]; pos++;
+            x = x ^ sec[pos]; pos++; 
+            pos %= sec.size() + 1;
         }   fout.write( data );
     });
 
