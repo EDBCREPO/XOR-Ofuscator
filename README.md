@@ -4,6 +4,7 @@ The most simplest XOR Ofuscator
 # Usage
 ```bash
 💻: XOR ?out=/PATH/TO/FILE/A ?in=/PATH/TO/FILE/B ?sec=SECRET_KEY
+💻: XOR ?file=/PATH/TO/FILE  ?sec=SECRET_KEY
 ```
 
 # Build
