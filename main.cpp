@@ -13,8 +13,6 @@ void normal() {
     auto file = fs::readable( process::env::get("in") );
     auto sec  = process::env::get("sec");
 
-    file.onClose([](){ console::log("done"); });
-
     file.onData([=]( string_t data ){
         ulong pos = 0; forEach( x, data ){
             x = x ^ sec[pos]; pos++; 
@@ -47,14 +45,27 @@ void abnormal() {
 
 void subnormal() {
 
+    file_t out;
+
+    if( !process::env::get("out").empty() )
+      { out = fs::writable( process::env::get("out") ); }
+
     auto sec  = process::env::get("sec");
     auto file = fs::std_input();
 
     file.onData([=]( string_t data ){
+
         ulong pos = 0; forEach( x, data ){
             x = x ^ sec[pos]; pos++; 
             pos %= sec.size() + 1;
-        }   console::log( data );
+        }   
+        
+        if( !out.is_available() ){
+            console::log( data );
+        } else {
+            out.write( data );
+        }
+
     });
 
     stream::pipe( file );
@@ -67,11 +78,8 @@ void onMain() {
 
     if( process::env::get("sec").empty() ){ process::error("no secret key found"); }
 
-    if( process::env::get("file").empty() && 
-        process::env::get("out") .empty() &&  
-        process::env::get("in")  .empty() 
-    ){ subnormal(); return; }
-
+    if( process::env::get("file").empty() && process::env::get("in").empty() )
+      { subnormal(); return; }
 
     if( process::env::get("file").empty() ){
     if( process::env::get("out").empty() ){ process::error("no output file found"); }
