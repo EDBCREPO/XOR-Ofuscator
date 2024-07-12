@@ -1,7 +1,11 @@
 #include <nodepp/nodepp.h>
 #include <nodepp/fs.h>
 
+/*─────────────────────────────────────────────────────────────────*/
+
 using namespace nodepp;
+
+/*─────────────────────────────────────────────────────────────────*/
 
 void normal() {
 
@@ -22,6 +26,8 @@ void normal() {
     
 }
 
+/*─────────────────────────────────────────────────────────────────*/
+
 void abnormal() {
 
     auto file = fs::readable( process::env::get("in") );
@@ -37,9 +43,35 @@ void abnormal() {
 
 }
 
+/*─────────────────────────────────────────────────────────────────*/
+
+void subnormal() {
+
+    auto sec  = process::env::get("sec");
+    auto file = fs::std_input();
+
+    file.onData([=]( string_t data ){
+        ulong pos = 0; forEach( x, data ){
+            x = x ^ sec[pos]; pos++; 
+            pos %= sec.size() + 1;
+        }   console::log( data );
+    });
+
+    stream::pipe( file );
+
+}
+
+/*─────────────────────────────────────────────────────────────────*/
+
 void onMain() {
 
     if( process::env::get("sec").empty() ){ process::error("no secret key found"); }
+
+    if( process::env::get("file").empty() && 
+        process::env::get("out") .empty() &&  
+        process::env::get("in")  .empty() 
+    ){ subnormal(); return; }
+
 
     if( process::env::get("file").empty() ){
     if( process::env::get("out").empty() ){ process::error("no output file found"); }
@@ -50,6 +82,8 @@ void onMain() {
     }
 
     if( process::env::get("out") == process::env::get("in") )
-      { abnormal(); } else { normal(); }
+      { abnormal(); return; } else { normal(); return; }
 
 }
+
+/*─────────────────────────────────────────────────────────────────*/
