@@ -34,6 +34,7 @@ void abnormal() {
 
     ulong pos = 0; forEach( x, data ){
         x = x^sec[pos]; pos++;
+        pos %= sec.size() + 1;
     }
 
     auto fout = fs::writable( process::env::get("out") );
