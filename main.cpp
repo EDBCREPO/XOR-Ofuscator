@@ -77,14 +77,14 @@ void subnormal() {
 
 void onMain() {
 
-    if( process::env::get("sec").empty() ){ process::error("no secret key found"); }
+    if( process::env::get("sec").empty() ){ throw except_t("no secret key found"); }
 
     if( process::env::get("file").empty() && process::env::get("in").empty() )
       { subnormal(); return; }
 
     if( process::env::get("file").empty() ){
-    if( process::env::get("out").empty() ){ process::error("no output file found"); }
-    if( process::env::get("in").empty()  ){ process::error("no input file found"); }
+    if( process::env::get("out").empty() ){ throw except_t("no output file found"); }
+    if( process::env::get("in").empty()  ){ throw except_t("no input file found"); }
     } else { 
         process::env::set( "out", process::env::get("file") );
         process::env::set( "in" , process::env::get("file") );
